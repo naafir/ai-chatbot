@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — AI Chat</title>
+  <link rel="stylesheet" href="http://127.0.0.1:8002/static/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="dark auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon large">⚡</div>
+        <h1 class="auth-brand">AI Chat</h1>
+      </div>
+      <h2 class="auth-title">Welcome back</h2>
+      <p class="auth-subtitle">Sign in to continue your conversations</p>
+      <div class="auth-error" id="authError" style="display:none">
+        <span class="error-icon">⚠</span>
+        <span id="authErrorText">Invalid email or password</span>
+      </div>
+      <div class="auth-form">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" id="email" class="form-input" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-with-toggle">
+            <input type="password" id="password" class="form-input" placeholder="Enter your password" autocomplete="current-password" />
+            <button type="button" class="password-toggle" id="passwordToggle">👁</button>
+          </div>
+        </div>
+        <button class="btn-primary full-width" id="loginBtn">
+          <span id="loginBtnText">Sign In</span>
+          <span class="btn-spinner" id="loginSpinner" style="display:none"><span class="spinner-ring"></span></span>
+        </button>
+      </div>
+      <div class="auth-divider"><span>Don't have an account?</span></div>
+      <a href="http://127.0.0.1:8001/signup" class="btn-secondary full-width text-center">Create Account</a>
+    </div>
+    <div class="auth-bg-decoration">
+      <div class="bg-orb orb-1"></div>
+      <div class="bg-orb orb-2"></div>
+    </div>
+  </div>
+  <script>
+    const API_BASE = "http://127.0.0.1:8001/api";
+    if (localStorage.getItem("token")) window.location.href = "http://127.0.0.1:8001/";
+    const loginBtn = document.getElementById("loginBtn");
+    const loginBtnText = document.getElementById("loginBtnText");
+    const loginSpinner = document.getElementById("loginSpinner");
+    const authError = document.getElementById("authError");
+    const authErrorText = document.getElementById("authErrorText");
+    document.getElementById("passwordToggle").addEventListener("click", () => {
+      const input = document.getElementById("password");
+      input.type = input.type === "password" ? "text" : "password";
+    });
+    document.getElementById("password").addEventListener("keydown", (e) => { if (e.key === "Enter") handleLogin(); });
+    document.getElementById("email").addEventListener("keydown", (e) => { if (e.key === "Enter") handleLogin(); });
+    loginBtn.addEventListener("click", handleLogin);
+    async function handleLogin() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      if (!email || !password) { showError("Please fill in all fields"); return; }
+      loginBtnText.style.display = "none";
+      loginSpinner.style.display = "inline-flex";
+      loginBtn.disabled = true;
+      authError.style.display = "none";
+      try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || "Login failed");
+        localStorage.setItem("token", data.access_token);
+        localStorage.setItem("user_id", data.user_id);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("email", data.email);
+        window.location.href = "http://127.0.0.1:8001/";
+      } catch (err) {
+        showError(err.message);
+        loginBtnText.style.display = "inline";
+        loginSpinner.style.display = "none";
+        loginBtn.disabled = false;
+      }
+    }
+    function showError(msg) {
+      authErrorText.textContent = msg;
+      authError.style.display = "flex";
+    }
+  </script>
+</body>
+</html>

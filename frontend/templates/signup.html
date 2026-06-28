@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Create Account — AI Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0f1117;color:#f0f2f8;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.auth-container{width:100%;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+.auth-card{background:#171923;border:1px solid #2a2e45;border-radius:24px;padding:40px 36px;width:100%;max-width:420px;position:relative;z-index:1;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+.auth-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:24px;gap:10px}
+.logo-icon{width:52px;height:52px;background:linear-gradient(135deg,#6c63ff,#a78bfa);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.auth-brand{font-size:22px;font-weight:800;color:#f0f2f8}
+.auth-title{font-size:22px;font-weight:700;text-align:center;margin-bottom:6px;color:#f0f2f8}
+.auth-subtitle{font-size:14px;color:#5a6280;text-align:center;margin-bottom:28px}
+.auth-error{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:10px;padding:11px 14px;margin-bottom:16px;display:flex;align-items:center;gap:8px;font-size:13px;color:#f87171}
+.auth-form{display:flex;flex-direction:column;gap:16px;margin-bottom:20px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:13px;font-weight:600;color:#9aa3b8}
+.form-input{background:#1a1d2e;border:1.5px solid #2a2e45;border-radius:10px;color:#f0f2f8;font-size:15px;font-family:inherit;padding:11px 14px;outline:none;width:100%;transition:border-color 0.18s,box-shadow 0.18s}
+.form-input:focus{border-color:#6c63ff;box-shadow:0 0 0 3px rgba(108,99,255,0.25)}
+.form-input::placeholder{color:#5a6280}
+.form-hint{font-size:11px;color:#5a6280}
+.input-with-toggle{position:relative}
+.input-with-toggle .form-input{padding-right:44px}
+.password-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5a6280;cursor:pointer;font-size:16px}
+.btn-primary{background:#6c63ff;color:white;border:none;border-radius:10px;padding:12px 20px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background 0.18s,transform 0.18s;box-shadow:0 4px 20px rgba(108,99,255,0.3)}
+.btn-primary:hover:not(:disabled){background:#5a52e0;transform:translateY(-1px)}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed}
+.btn-secondary{padding:10px 20px;background:#1e2130;color:#9aa3b8;border:1px solid #2a2e45;border-radius:10px;font-size:14px;font-weight:500;font-family:inherit;text-decoration:none;display:flex;align-items:center;justify-content:center;width:100%;transition:background 0.18s}
+.btn-secondary:hover{background:#252840;color:#f0f2f8}
+.spinner-ring{width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-spinner{display:inline-flex}
+.auth-divider{text-align:center;margin:18px 0 14px;font-size:13px;color:#5a6280}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.07;pointer-events:none}
+.orb1{width:400px;height:400px;background:#6c63ff;top:-100px;right:-100px}
+.orb2{width:300px;height:300px;background:#a78bfa;bottom:-80px;left:-80px}
+</style>
+</head>
+<body>
+<div class="auth-container">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">⚡</div>
+      <h1 class="auth-brand">AI Chat</h1>
+    </div>
+    <h2 class="auth-title">Create your account</h2>
+    <p class="auth-subtitle">Start chatting with your free AI assistant</p>
+    <div class="auth-error" id="authError" style="display:none">
+      <span>⚠</span><span id="authErrorText">Something went wrong</span>
+    </div>
+    <div class="auth-form">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" id="username" class="form-input" placeholder="Choose a username" maxlength="50"/>
+        <span class="form-hint">Letters, numbers, - and _ only. Min 3 characters.</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="email" class="form-input" placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-with-toggle">
+          <input type="password" id="password" class="form-input" placeholder="At least 6 characters"/>
+          <button type="button" class="password-toggle" id="pwToggle">👁</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <input type="password" id="confirmPassword" class="form-input" placeholder="Repeat your password"/>
+      </div>
+      <button class="btn-primary" id="signupBtn">
+        <span id="signupBtnText">Create Account</span>
+        <span class="btn-spinner" id="signupSpinner" style="display:none"><span class="spinner-ring"></span></span>
+      </button>
+    </div>
+    <div class="auth-divider">Already have an account?</div>
+    <a href="http://127.0.0.1:8002/login" class="btn-secondary">Sign In</a>
+  </div>
+</div>
+<script>
+const API_BASE = "http://127.0.0.1:8002/api";
+if(localStorage.getItem("token")) window.location.href="http://127.0.0.1:8002/";
+document.getElementById("pwToggle").onclick=()=>{
+  const p=document.getElementById("password");
+  p.type=p.type==="password"?"text":"password";
+};
+document.getElementById("confirmPassword").addEventListener("keydown",e=>{if(e.key==="Enter")handleSignup();});
+document.getElementById("signupBtn").onclick=handleSignup;
+async function handleSignup(){
+  const username=document.getElementById("username").value.trim();
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+  const confirm=document.getElementById("confirmPassword").value;
+  if(!username||!email||!password||!confirm){showErr("Please fill in all fields");return;}
+  if(username.length<3){showErr("Username must be at least 3 characters");return;}
+  if(password.length<6){showErr("Password must be at least 6 characters");return;}
+  if(password!==confirm){showErr("Passwords do not match");return;}
+  document.getElementById("signupBtnText").style.display="none";
+  document.getElementById("signupSpinner").style.display="inline-flex";
+  document.getElementById("signupBtn").disabled=true;
+  document.getElementById("authError").style.display="none";
+  try{
+    const r=await fetch(`${API_BASE}/auth/signup`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({username,email,password})
+    });
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.detail||"Signup failed");
+    localStorage.setItem("token",d.access_token);
+    localStorage.setItem("user_id",d.user_id);
+    localStorage.setItem("username",d.username);
+    localStorage.setItem("email",d.email);
+    window.location.href="http://127.0.0.1:8002/";
+  }catch(err){
+    showErr(err.message);
+    document.getElementById("signupBtnText").style.display="inline";
+    document.getElementById("signupSpinner").style.display="none";
+    document.getElementById("signupBtn").disabled=false;
+  }
+}
+function showErr(msg){
+  document.getElementById("authErrorText").textContent=msg;
+  document.getElementById("authError").style.display="flex";
+}
+</script>
+</body>
+</html>

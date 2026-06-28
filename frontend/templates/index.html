@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Chat — Your Personal Assistant</title>
+ <link rel="stylesheet" href="http://127.0.0.1:8002/static/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="dark">
+
+  <!-- ═══════════════════════ SIDEBAR ═══════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <span class="logo-text">AI Chat</span>
+      </div>
+      <button class="icon-btn sidebar-toggle-btn" id="sidebarToggleBtn" title="Close sidebar">
+        ☰
+      </button>
+    </div>
+
+    <!-- New Chat Button -->
+    <button class="new-chat-btn" id="newChatBtn">
+      <span class="new-chat-icon">+</span>
+      <span>New Chat</span>
+    </button>
+
+    <!-- Chat History List -->
+    <div class="sidebar-section">
+      <p class="sidebar-section-label">Recent Chats</p>
+      <div class="chat-history-list" id="chatHistoryList">
+        <div class="history-empty" id="historyEmpty">
+          <div class="history-empty-icon">💬</div>
+          <p>No chats yet</p>
+          <span>Start a conversation!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Footer — User Profile -->
+    <div class="sidebar-footer">
+      <div class="user-profile" id="userProfile">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <div class="user-info">
+          <p class="user-name" id="userName">Loading...</p>
+          <p class="user-email" id="userEmail">...</p>
+        </div>
+        <div class="profile-menu-wrapper">
+          <button class="icon-btn" id="profileMenuBtn" title="Account options">⋯</button>
+          <div class="profile-dropdown" id="profileDropdown">
+            <button class="dropdown-item danger" id="logoutBtn">
+              <span>🚪</span> Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════ MAIN CONTENT ═══════════════════════ -->
+  <main class="main-content" id="mainContent">
+
+    <!-- Top Navigation Bar -->
+    <nav class="topbar">
+      <button class="icon-btn" id="mobileSidebarBtn" title="Toggle sidebar">☰</button>
+      <div class="topbar-center">
+        <span class="model-badge">🦙 Llama 3</span>
+      </div>
+      <div class="topbar-right">
+        <div class="ollama-status" id="ollamaStatus" title="Ollama connection status">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Checking...</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ─── Chat Window ─── -->
+    <div class="chat-window" id="chatWindow">
+
+      <!-- Welcome Screen (shown when no active chat) -->
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-icon">⚡</div>
+        <h1 class="welcome-title">How can I help you today?</h1>
+        <p class="welcome-subtitle">Powered by Llama 3 — running entirely on your computer</p>
+
+        <div class="suggestion-grid">
+          <button class="suggestion-card" onclick="useSuggestion('Explain quantum computing in simple terms')">
+            <div class="suggestion-icon">🔬</div>
+            <p>Explain quantum computing in simple terms</p>
+          </button>
+          <button class="suggestion-card" onclick="useSuggestion('Write a Python function to reverse a linked list')">
+            <div class="suggestion-icon">💻</div>
+            <p>Write a Python function to reverse a linked list</p>
+          </button>
+          <button class="suggestion-card" onclick="useSuggestion('What are the best practices for REST API design?')">
+            <div class="suggestion-icon">🌐</div>
+            <p>Best practices for REST API design</p>
+          </button>
+          <button class="suggestion-card" onclick="useSuggestion('Help me write a professional email to my professor')">
+            <div class="suggestion-icon">✉️</div>
+            <p>Help me write a professional email</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages Container -->
+      <div class="messages-container" id="messagesContainer">
+        <!-- Messages are injected here by JavaScript -->
+      </div>
+
+    </div>
+
+    <!-- ─── Input Area ─── -->
+    <div class="input-area">
+      <div class="input-wrapper">
+        <textarea
+          id="messageInput"
+          class="message-input"
+          placeholder="Message AI Chat..."
+          rows="1"
+          maxlength="10000"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" disabled title="Send message">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+      <p class="input-disclaimer">AI can make mistakes. Consider checking important information.</p>
+    </div>
+
+  </main>
+
+  <!-- ═══════════════════════ TOAST NOTIFICATION ═══════════════════════ -->
+  <div class="toast" id="toast">
+    <span class="toast-icon" id="toastIcon">✓</span>
+    <span id="toastMessage">Message</span>
+  </div>
+
+  <!-- ═══════════════════════ DELETE MODAL ═══════════════════════ -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+      <div class="modal-icon">🗑️</div>
+      <h3 class="modal-title">Delete Chat?</h3>
+      <p class="modal-text">This chat and all its messages will be permanently deleted.</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancelDeleteBtn">Cancel</button>
+        <button class="btn-danger" id="confirmDeleteBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
