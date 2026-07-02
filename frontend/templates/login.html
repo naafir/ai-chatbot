@@ -1,97 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign In — AI Chat</title>
-  <link rel="stylesheet" href="http://127.0.0.1:8002/static/css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sign In — AI Chat</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0f1117;color:#f0f2f8;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.auth-container{width:100%;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+.auth-card{background:#171923;border:1px solid #2a2e45;border-radius:24px;padding:40px 36px;width:100%;max-width:420px;position:relative;z-index:1;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+.auth-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:24px;gap:10px}
+.logo-icon{width:52px;height:52px;background:linear-gradient(135deg,#6c63ff,#a78bfa);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.auth-brand{font-size:22px;font-weight:800;color:#f0f2f8}
+.auth-title{font-size:22px;font-weight:700;text-align:center;margin-bottom:6px;color:#f0f2f8}
+.auth-subtitle{font-size:14px;color:#5a6280;text-align:center;margin-bottom:28px}
+.auth-error{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:10px;padding:11px 14px;margin-bottom:16px;display:flex;align-items:center;gap:8px;font-size:13px;color:#f87171}
+.auth-form{display:flex;flex-direction:column;gap:16px;margin-bottom:20px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:13px;font-weight:600;color:#9aa3b8}
+.form-input{background:#1a1d2e;border:1.5px solid #2a2e45;border-radius:10px;color:#f0f2f8;font-size:15px;font-family:inherit;padding:11px 14px;outline:none;width:100%;transition:border-color 0.18s,box-shadow 0.18s}
+.form-input:focus{border-color:#6c63ff;box-shadow:0 0 0 3px rgba(108,99,255,0.25)}
+.form-input::placeholder{color:#5a6280}
+.input-with-toggle{position:relative}
+.input-with-toggle .form-input{padding-right:44px}
+.password-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#5a6280;cursor:pointer;font-size:16px}
+.btn-primary{background:#6c63ff;color:white;border:none;border-radius:10px;padding:12px 20px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:background 0.18s,transform 0.18s;box-shadow:0 4px 20px rgba(108,99,255,0.3)}
+.btn-primary:hover:not(:disabled){background:#5a52e0;transform:translateY(-1px)}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed}
+.btn-secondary{padding:10px 20px;background:#1e2130;color:#9aa3b8;border:1px solid #2a2e45;border-radius:10px;font-size:14px;font-weight:500;font-family:inherit;text-decoration:none;display:flex;align-items:center;justify-content:center;width:100%;transition:background 0.18s}
+.btn-secondary:hover{background:#252840;color:#f0f2f8}
+.spinner-ring{width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-spinner{display:inline-flex}
+.auth-divider{text-align:center;margin:18px 0 14px;font-size:13px;color:#5a6280}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.07;pointer-events:none}
+.orb1{width:400px;height:400px;background:#6c63ff;top:-100px;right:-100px}
+.orb2{width:300px;height:300px;background:#a78bfa;bottom:-80px;left:-80px}
+</style>
 </head>
-<body class="dark auth-page">
-  <div class="auth-container">
-    <div class="auth-card">
-      <div class="auth-logo">
-        <div class="logo-icon large">⚡</div>
-        <h1 class="auth-brand">AI Chat</h1>
-      </div>
-      <h2 class="auth-title">Welcome back</h2>
-      <p class="auth-subtitle">Sign in to continue your conversations</p>
-      <div class="auth-error" id="authError" style="display:none">
-        <span class="error-icon">⚠</span>
-        <span id="authErrorText">Invalid email or password</span>
-      </div>
-      <div class="auth-form">
-        <div class="form-group">
-          <label class="form-label" for="email">Email</label>
-          <input type="email" id="email" class="form-input" placeholder="you@example.com" autocomplete="email" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="password">Password</label>
-          <div class="input-with-toggle">
-            <input type="password" id="password" class="form-input" placeholder="Enter your password" autocomplete="current-password" />
-            <button type="button" class="password-toggle" id="passwordToggle">👁</button>
-          </div>
-        </div>
-        <button class="btn-primary full-width" id="loginBtn">
-          <span id="loginBtnText">Sign In</span>
-          <span class="btn-spinner" id="loginSpinner" style="display:none"><span class="spinner-ring"></span></span>
-        </button>
-      </div>
-      <div class="auth-divider"><span>Don't have an account?</span></div>
-      <a href="http://127.0.0.1:8001/signup" class="btn-secondary full-width text-center">Create Account</a>
+<body>
+<div class="auth-container">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">⚡</div>
+      <h1 class="auth-brand">AI Chat</h1>
     </div>
-    <div class="auth-bg-decoration">
-      <div class="bg-orb orb-1"></div>
-      <div class="bg-orb orb-2"></div>
+    <h2 class="auth-title">Welcome back</h2>
+    <p class="auth-subtitle">Sign in to continue your conversations</p>
+    <div class="auth-error" id="authError" style="display:none">
+      <span>⚠</span><span id="authErrorText">Invalid email or password</span>
     </div>
+    <div class="auth-form">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="email" class="form-input" placeholder="you@example.com" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-with-toggle">
+          <input type="password" id="password" class="form-input" placeholder="Enter your password" autocomplete="current-password"/>
+          <button type="button" class="password-toggle" id="pwToggle">👁</button>
+        </div>
+      </div>
+      <button class="btn-primary" id="loginBtn">
+        <span id="loginBtnText">Sign In</span>
+        <span class="btn-spinner" id="loginSpinner" style="display:none"><span class="spinner-ring"></span></span>
+      </button>
+    </div>
+    <div class="auth-divider">Don't have an account?</div>
+    <a href="http://127.0.0.1:8003/signup" class="btn-secondary">Create Account</a>
   </div>
-  <script>
-    const API_BASE = "http://127.0.0.1:8001/api";
-    if (localStorage.getItem("token")) window.location.href = "http://127.0.0.1:8001/";
-    const loginBtn = document.getElementById("loginBtn");
-    const loginBtnText = document.getElementById("loginBtnText");
-    const loginSpinner = document.getElementById("loginSpinner");
-    const authError = document.getElementById("authError");
-    const authErrorText = document.getElementById("authErrorText");
-    document.getElementById("passwordToggle").addEventListener("click", () => {
-      const input = document.getElementById("password");
-      input.type = input.type === "password" ? "text" : "password";
+</div>
+<script>
+const API_BASE = "http://127.0.0.1:8003/api";
+if(localStorage.getItem("token")) window.location.href="http://127.0.0.1:8003/";
+document.getElementById("pwToggle").onclick=()=>{
+  const p=document.getElementById("password");
+  p.type=p.type==="password"?"text":"password";
+};
+document.getElementById("password").addEventListener("keydown",e=>{if(e.key==="Enter")handleLogin();});
+document.getElementById("email").addEventListener("keydown",e=>{if(e.key==="Enter")handleLogin();});
+document.getElementById("loginBtn").onclick=handleLogin;
+async function handleLogin(){
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+  if(!email||!password){showErr("Please fill in all fields");return;}
+  document.getElementById("loginBtnText").style.display="none";
+  document.getElementById("loginSpinner").style.display="inline-flex";
+  document.getElementById("loginBtn").disabled=true;
+  document.getElementById("authError").style.display="none";
+  try{
+    const r=await fetch(`${API_BASE}/auth/login`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({email,password})
     });
-    document.getElementById("password").addEventListener("keydown", (e) => { if (e.key === "Enter") handleLogin(); });
-    document.getElementById("email").addEventListener("keydown", (e) => { if (e.key === "Enter") handleLogin(); });
-    loginBtn.addEventListener("click", handleLogin);
-    async function handleLogin() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      if (!email || !password) { showError("Please fill in all fields"); return; }
-      loginBtnText.style.display = "none";
-      loginSpinner.style.display = "inline-flex";
-      loginBtn.disabled = true;
-      authError.style.display = "none";
-      try {
-        const response = await fetch(`${API_BASE}/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.detail || "Login failed");
-        localStorage.setItem("token", data.access_token);
-        localStorage.setItem("user_id", data.user_id);
-        localStorage.setItem("username", data.username);
-        localStorage.setItem("email", data.email);
-        window.location.href = "http://127.0.0.1:8001/";
-      } catch (err) {
-        showError(err.message);
-        loginBtnText.style.display = "inline";
-        loginSpinner.style.display = "none";
-        loginBtn.disabled = false;
-      }
-    }
-    function showError(msg) {
-      authErrorText.textContent = msg;
-      authError.style.display = "flex";
-    }
-  </script>
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.detail||"Login failed");
+    localStorage.setItem("token",d.access_token);
+    localStorage.setItem("user_id",d.user_id);
+    localStorage.setItem("username",d.username);
+    localStorage.setItem("email",d.email);
+    window.location.href="http://127.0.0.1:8003/";
+  }catch(err){
+    showErr(err.message);
+    document.getElementById("loginBtnText").style.display="inline";
+    document.getElementById("loginSpinner").style.display="none";
+    document.getElementById("loginBtn").disabled=false;
+  }
+}
+function showErr(msg){
+  document.getElementById("authErrorText").textContent=msg;
+  document.getElementById("authError").style.display="flex";
+}
+</script>
 </body>
 </html>

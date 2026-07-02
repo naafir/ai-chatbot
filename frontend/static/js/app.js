@@ -1,6 +1,6 @@
 "use strict";
 
-const API_BASE = "http://127.0.0.1:8002/api";
+const API_BASE = "http://127.0.0.1:8003/api";
 
 const state = {
   token: localStorage.getItem("token"),
@@ -13,7 +13,7 @@ const state = {
 };
 
 if (!state.token) {
-  window.location.href = "http://127.0.0.1:8002/login";
+  window.location.href = "http://127.0.0.1:8003/login";
 }
 
 const elements = {
@@ -346,7 +346,7 @@ function logout() {
   localStorage.removeItem("user_id");
   localStorage.removeItem("username");
   localStorage.removeItem("email");
-  window.location.href = "http://127.0.0.1:8002/login";
+  window.location.href = "http://127.0.0.1:8003/login";
 }
 
 let toastTimeout;
